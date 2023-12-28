@@ -1,0 +1,20 @@
+$black: #4F4F4F;
+
+.admin-bar {
+  &-link {
+    text-decoration: none;
+    color: $black;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &__navigate {
+      display: flex;
+
+      svg + span.name {
+        margin-left: 5px;
+      }
+    }
+  }
+}
