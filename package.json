@@ -1,6 +1,6 @@
 {
   "name": "@cactus-galaxy/vue-admin-bar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Admin bar",
   "main": "index.js",
   "types": "index.d.ts",
