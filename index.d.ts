@@ -1,16 +1,34 @@
+import {PluginFunction} from 'vue';
 import {Store} from "vuex";
 import type {AxiosInstance} from "axios";
 
-declare module 'vue-admin-bar' {
-  import {PluginObject} from 'vue';
+// package configuration
+export interface AdminBarInstallOptions {
+  axios: AxiosInstance;
+  store: Store<any>;
+  localStoreKey?: string;
+}
 
-  export interface AdminBarInstallOptions {
-    axios?: AxiosInstance;
-    store?: Store;
-    localStoreKey?: string;
-  }
+declare const VueAdminBar: PluginFunction<AdminBarInstallOptions>;
 
-  declare const VueAdminBar: PluginObject<AdminBarInstallOptions>;
+export default VueAdminBar;
 
-  export default VueAdminBar;
+
+// package data
+export interface AdminLink {
+  title: string;
+  url: string;
+}
+
+export interface AdminBarData {
+  adminDashboard: AdminLink;
+  links: Array<AdminLink>;
+}
+
+export interface ResponseWithAdminData<T> {
+  data: T;
+  adminData: {
+    adminDashboard: AdminLink;
+    links?: Array<AdminLink>;
+  };
 }
