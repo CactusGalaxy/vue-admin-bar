@@ -1,6 +1,7 @@
-import AdminBar from "./admin-bar/index.vue";
 import camelcaseObjectDeep from "camelcase-object-deep";
 import _ from "lodash";
+
+import AdminBar from "./src/admin-bar/index.vue";
 
 let storeKey = 'admin_bar_isOpen';
 

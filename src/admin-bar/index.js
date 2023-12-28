@@ -1,4 +1,5 @@
 import {mapGetters, mapMutations} from "vuex";
+
 import Container from "./container.vue";
 
 export default {
