@@ -1,12 +1,12 @@
 <template>
   <container :visible="canBeRendered">
     <a
-        v-if="adminHomeLink"
-        :href="adminHomeLink.url"
+        v-if="dashboardLink"
+        :href="dashboardLink.url"
         class="admin-bar-link admin-bar-link__main"
         target="_blank"
     >
-      {{ adminHomeLink.title }}
+      {{ dashboardLink.title }}
     </a>
 
     <a

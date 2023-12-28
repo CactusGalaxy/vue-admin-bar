@@ -11,28 +11,22 @@ export default {
       adminBarData: 'adminBar/adminBarData',
       canBeRendered: 'adminBar/canBeRendered',
     }),
+    links() {
+      return this.adminBarData.links;
+    },
+    dashboardLink() {
+      return this.adminBarData.adminDashboard;
+    },
   },
   watch: {
-    adminBarData() {
-      this.adminHomeLink = this.adminBarData.adminHome
-      this.links = this.adminBarData.links
-    },
+    // reset links after route changed
     ['$route']() {
-      this.pushAdminData({
-        adminHome: this.adminHomeLink,
-        resetLinks: true,
-      })
-    }
-  },
-  data() {
-    return {
-      adminHomeLink: null,
-      links: [],
+      this.resetLinks()
     }
   },
   methods: {
     ...mapMutations({
-      pushAdminData: 'adminBar/pushAdminData',
+      resetLinks: 'adminBar/resetLinks',
     }),
   }
 }

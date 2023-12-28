@@ -1,24 +1,25 @@
 import AdminBar from "./admin-bar/index.vue";
 import camelcaseObjectDeep from "camelcase-object-deep";
+import _ from "lodash";
 
 let storeKey = 'admin_bar_isOpen';
 
 const setStateToLocalStore = (state) => {
-  localStorage.setItem(storeKey, state ? '1' : '0')
+  localStorage.setItem(storeKey, state ? '1' : '0');
 
-  return state
-}
+  return state;
+};
 
 const getStoredStatus = () => {
   return localStorage.hasOwnProperty(storeKey)
     ? !!localStorage.getItem(storeKey)
-    : false
-}
+    : false;
+};
 
 const adminBarModule = {
   namespaced: true,
   state: {
-    adminBarData: null,
+    adminBarData: {},
     isOpen: getStoredStatus(),
     canBeRendered: false,
   },
@@ -28,23 +29,25 @@ const adminBarModule = {
     canBeRendered: (state) => state.canBeRendered,
   },
   mutations: {
+    resetLinks(state) {
+      state.adminBarData = {
+        adminDashboard: state.adminBarData.adminDashboard,
+        links: []
+      };
+    },
     pushAdminData(state, data) {
-      let currentLinks = [];
-      if (!data.resetLinks) {
-        currentLinks = state.adminBarData?.links || [];
-      }
+      let currentLinks = state.adminBarData?.links || [];
+
       const newLinks = data.links || [];
 
-      currentLinks.push(...newLinks)
-
-      // unique links by url
-      currentLinks = currentLinks.filter((item, index, self) =>
-        index === self.findIndex((t) => (
-          t.url === item.url
-        )))
+      currentLinks = _(currentLinks)
+        .push(...newLinks)
+        .filter()
+        .uniqBy('url')
+        .value()
 
       state.adminBarData = {
-        adminHome: data.adminHome,
+        adminDashboard: data.adminDashboard || state.adminBarData.adminDashboard,
         links: currentLinks
       };
     },
@@ -55,9 +58,26 @@ const adminBarModule = {
       state.canBeRendered = !!status
     },
   }
-}
+};
 
-let installed = false
+let installed = false;
+
+const setAdminData = (response, options) => {
+  if (!response.data) {
+    return;
+  }
+
+  const data = camelcaseObjectDeep(response.data)
+
+  if (!data.adminData) {
+    return;
+  }
+
+  options.store.commit('adminBar/pushAdminData', {
+    adminDashboard: data.adminData.adminDashboard,
+    links: data.adminData.links,
+  })
+};
 
 function install(Vue, options) {
   if (!options.store) {
@@ -77,19 +97,11 @@ function install(Vue, options) {
 
   options.store.registerModule('adminBar', adminBarModule);
 
-  if (options.axios) {
-    options.axios.interceptors.response.use((response) => {
+  options.axios.interceptors.response.use((response) => {
+    setAdminData(response, options);
 
-      if (response.data) {
-        const data = camelcaseObjectDeep(response.data)
-        if (data.adminData) {
-          options.store.commit('adminBar/pushAdminData', data.adminData)
-        }
-      }
-
-      return response
-    })
-  }
+    return response
+  })
 
   if (options.localStoreKey) {
     storeKey = options.localStoreKey
